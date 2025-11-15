@@ -32,18 +32,19 @@ const Tables = () => {
   };
 
   const fetchTables = async () => {
-    const { data } = await supabase.from("tables").select("*").order("table_number");
+    const { data, error } = await supabase
+      .from("tables")
+      .select("*")
+      .order("table_number");
     
-    if (!data || data.length === 0) {
-      const sampleTables = [
-        { id: "1", table_number: 1, capacity: 4, is_available: true },
-        { id: "2", table_number: 2, capacity: 2, is_available: true },
-        { id: "3", table_number: 3, capacity: 6, is_available: false },
-        { id: "4", table_number: 4, capacity: 4, is_available: true },
-      ];
-      setTables(sampleTables);
+    if (error) {
+      toast({
+        title: "Error loading tables",
+        description: error.message,
+        variant: "destructive",
+      });
     } else {
-      setTables(data);
+      setTables(data || []);
     }
   };
 
