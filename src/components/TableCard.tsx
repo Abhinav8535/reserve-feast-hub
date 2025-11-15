@@ -40,6 +40,6 @@ export const TableCard = ({ tableNumber, capacity, isAvailable, onBook }: TableC
 
 const Badge = ({ children, className, variant }: { children: React.ReactNode; className?: string; variant?: string }) => {
   const baseClass = "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold";
-  const variantClass = variant === "secondary" ? "bg-secondary text-secondary-foreground" : "";
+  const variantClass = variant === "secondary" ? "bg-secondary text-secondary-foreground" : "bg-accent text-accent-foreground";
   return <span className={`${baseClass} ${variantClass} ${className}`}>{children}</span>;
 };

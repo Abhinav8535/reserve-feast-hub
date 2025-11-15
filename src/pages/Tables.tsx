@@ -7,7 +7,7 @@ import { TableCard } from "@/components/TableCard";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 
 const Tables = () => {
@@ -64,9 +64,33 @@ const Tables = () => {
       return;
     }
 
+    // Resolve a valid UUID for table_id even if UI holds a numeric/string placeholder
+    let tableId: string | null = selectedTable?.id ?? null;
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+    if (!tableId || !uuidRegex.test(String(tableId))) {
+      const { data: tableRow, error: tableLookupError } = await supabase
+        .from("tables")
+        .select("id")
+        .eq("table_number", selectedTable?.table_number)
+        .maybeSingle();
+
+      if (tableLookupError) {
+        toast({ title: "Error", description: tableLookupError.message, variant: "destructive" });
+        return;
+      }
+
+      tableId = tableRow?.id ?? null;
+    }
+
+    if (!tableId) {
+      toast({ title: "Error", description: "Unable to resolve selected table.", variant: "destructive" });
+      return;
+    }
+
     const { error } = await supabase.from("bookings").insert({
       customer_id: user.id,
-      table_id: selectedTable.id,
+      table_id: tableId,
       booking_date: bookingDate,
       booking_time: bookingTime,
       number_of_guests: guests,
@@ -104,6 +128,7 @@ const Tables = () => {
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Book Table {selectedTable?.table_number}</DialogTitle>
+              <DialogDescription>Choose date, time, and number of guests.</DialogDescription>
             </DialogHeader>
             <div className="space-y-4">
               <div>
@@ -132,8 +157,11 @@ const Tables = () => {
                   type="number"
                   min="1"
                   max={selectedTable?.capacity}
-                  value={guests}
-                  onChange={(e) => setGuests(parseInt(e.target.value))}
+                  value={Number.isNaN(guests as unknown as number) ? 1 : guests}
+                  onChange={(e) => {
+                    const v = parseInt(e.target.value, 10);
+                    setGuests(Number.isNaN(v) ? 1 : v);
+                  }}
                 />
               </div>
               <Button onClick={confirmBooking} className="w-full">
