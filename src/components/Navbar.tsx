@@ -55,6 +55,9 @@ export const Navbar = () => {
                 <Button onClick={() => navigate("/dashboard")} variant="outline">
                   Dashboard
                 </Button>
+                <Button onClick={() => navigate("/profile")} variant="outline">
+                  Profile
+                </Button>
                 <Button onClick={handleLogout} variant="ghost" size="icon">
                   <LogOut className="h-4 w-4" />
                 </Button>
