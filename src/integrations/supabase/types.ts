@@ -174,24 +174,33 @@ export type Database = {
       }
       profiles: {
         Row: {
+          business_email: string | null
           created_at: string | null
           email: string
           full_name: string
           id: string
+          phone_number: string | null
+          restaurant_name: string | null
           role: Database["public"]["Enums"]["user_role"]
         }
         Insert: {
+          business_email?: string | null
           created_at?: string | null
           email: string
           full_name: string
           id: string
+          phone_number?: string | null
+          restaurant_name?: string | null
           role: Database["public"]["Enums"]["user_role"]
         }
         Update: {
+          business_email?: string | null
           created_at?: string | null
           email?: string
           full_name?: string
           id?: string
+          phone_number?: string | null
+          restaurant_name?: string | null
           role?: Database["public"]["Enums"]["user_role"]
         }
         Relationships: []

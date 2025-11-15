@@ -17,6 +17,9 @@ const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState<"customer" | "owner">("customer");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [restaurantName, setRestaurantName] = useState("");
+  const [businessEmail, setBusinessEmail] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async (e: React.FormEvent) => {
@@ -30,6 +33,9 @@ const Register = () => {
         data: {
           full_name: fullName,
           role: role,
+          phone_number: role === "customer" ? phoneNumber : null,
+          restaurant_name: role === "owner" ? restaurantName : null,
+          business_email: role === "owner" ? businessEmail : null,
         },
         emailRedirectTo: `${window.location.origin}/`,
       },
@@ -113,6 +119,47 @@ const Register = () => {
                   minLength={6}
                 />
               </div>
+
+              {role === "customer" && (
+                <div className="space-y-2">
+                  <Label htmlFor="phoneNumber">Phone Number</Label>
+                  <Input
+                    id="phoneNumber"
+                    type="tel"
+                    placeholder="+1 234 567 8900"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                    required
+                  />
+                </div>
+              )}
+
+              {role === "owner" && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="restaurantName">Restaurant Name</Label>
+                    <Input
+                      id="restaurantName"
+                      type="text"
+                      placeholder="My Restaurant"
+                      value={restaurantName}
+                      onChange={(e) => setRestaurantName(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="businessEmail">Business Email</Label>
+                    <Input
+                      id="businessEmail"
+                      type="email"
+                      placeholder="business@restaurant.com"
+                      value={businessEmail}
+                      onChange={(e) => setBusinessEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                </>
+              )}
 
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? "Creating account..." : "Register"}
